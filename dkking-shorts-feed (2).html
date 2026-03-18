@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@_dkking_ — YouTube Shorts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:     #0d0d0d;
+      --bg2:    #161616;
+      --bg3:    #1f1f1f;
+      --border: rgba(255,255,255,0.07);
+      --bh:     rgba(255,255,255,0.14);
+      --text:   #efefef;
+      --muted:  #5a5a5a;
+      --muted2: #383838;
+      --red:    #FF0000;
+      --red2:   #cc0000;
+      --radius: 14px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Sora', sans-serif;
+      font-size: 14px;
+      min-height: 100vh;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(255,0,0,0.07) 0%, transparent 45%),
+        radial-gradient(circle at 85% 85%, rgba(255,80,0,0.04) 0%, transparent 45%);
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── LAYOUT ── */
+    .wrap { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+
+    /* ── HEADER ── */
+    header {
+      padding: 2.5rem 0 2rem;
+      display: flex; align-items: center; gap: 1rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+    .yt-icon {
+      width: 52px; height: 52px; border-radius: 14px;
+      background: var(--red);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 0 20px rgba(255,0,0,0.25);
+    }
+    .yt-icon svg { width: 26px; height: 26px; fill: white; }
+    .header-text { flex: 1; }
+    .header-text h1 {
+      font-size: 22px; font-weight: 800; letter-spacing: -0.5px;
+      background: linear-gradient(90deg, #fff 0%, rgba(255,255,255,0.55) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .header-text p { font-size: 12px; color: var(--muted); margin-top: 3px; font-weight: 300; letter-spacing: 0.3px; }
+    .live-badge {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,0,0,0.1); border: 1px solid rgba(255,0,0,0.22);
+      color: #ff6b6b; font-size: 11px; font-weight: 600;
+      padding: 5px 13px; border-radius: 999px; letter-spacing: 0.3px;
+    }
+    .live-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: #ff4444;
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.3;transform:scale(.8)} }
+
+    /* ── SETUP NOTICE ── */
+    .setup-box {
+      background: rgba(255,200,0,0.05); border: 1px solid rgba(255,200,0,0.18);
+      border-radius: var(--radius); padding: 1.25rem 1.5rem; margin-bottom: 1.75rem;
+      display: none;
+    }
+    .setup-box h3 { font-size: 13px; font-weight: 700; color: #fbbf24; margin-bottom: 0.5rem; }
+    .setup-box ol { padding-left: 1.2rem; }
+    .setup-box li { font-size: 12px; color: var(--muted); line-height: 2; }
+    .setup-box a { color: #fbbf24; }
+    .setup-box code {
+      background: var(--bg3); padding: 1px 6px; border-radius: 4px;
+      font-size: 11px; color: #fbbf24; font-family: monospace;
+    }
+
+    /* ── STATS ── */
+    .stats-bar {
+      display: flex; gap: 10px; margin-bottom: 1.75rem; flex-wrap: wrap;
+      display: none;
+    }
+    .stat-pill {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 999px; padding: 5px 14px;
+      font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 5px;
+    }
+    .stat-pill b { color: var(--text); font-weight: 600; }
+
+    /* ── GRID ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 14px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      text-decoration: none; color: inherit; display: block;
+      transition: border-color .2s, transform .25s cubic-bezier(.34,1.56,.64,1);
+      animation: up .4s ease both;
+    }
+    .card:hover { border-color: var(--bh); transform: translateY(-5px) scale(1.015); text-decoration: none; color: inherit; }
+    @keyframes up { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+    /* stagger */
+    .card:nth-child(1){animation-delay:.03s} .card:nth-child(2){animation-delay:.06s}
+    .card:nth-child(3){animation-delay:.09s} .card:nth-child(4){animation-delay:.12s}
+    .card:nth-child(5){animation-delay:.15s} .card:nth-child(6){animation-delay:.18s}
+    .card:nth-child(7){animation-delay:.21s} .card:nth-child(8){animation-delay:.24s}
+    .card:nth-child(9){animation-delay:.27s} .card:nth-child(10){animation-delay:.30s}
+    .card:nth-child(11){animation-delay:.33s} .card:nth-child(12){animation-delay:.36s}
+
+    /* ── THUMB ── */
+    .thumb {
+      position: relative; width: 100%; padding-top: 177.78%;
+      background: var(--bg3); overflow: hidden;
+    }
+    .thumb img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; transition: transform .4s ease;
+    }
+    .card:hover .thumb img { transform: scale(1.06); }
+    .thumb-grad {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.78) 0%, rgba(0,0,0,.15) 40%, transparent 70%);
+      z-index: 1;
+    }
+    .play-ring {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-50%) scale(.85);
+      width: 48px; height: 48px; border-radius: 50%;
+      background: rgba(255,255,255,0.13); backdrop-filter: blur(6px);
+      border: 1.5px solid rgba(255,255,255,0.22);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 2; opacity: 0; transition: opacity .2s, transform .2s;
+    }
+    .card:hover .play-ring { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+    .play-ring svg { width: 18px; height: 18px; fill: white; margin-left: 2px; }
+
+    /* shorts badge */
+    .shorts-badge {
+      position: absolute; top: 9px; left: 9px; z-index: 3;
+      background: var(--red); color: white;
+      font-size: 9px; font-weight: 800; letter-spacing: 0.5px;
+      padding: 2px 7px; border-radius: 4px;
+    }
+
+    .thumb-stats {
+      position: absolute; bottom: 8px; left: 9px; right: 9px;
+      display: flex; gap: 8px; z-index: 3;
+    }
+    .ts {
+      display: flex; align-items: center; gap: 3px;
+      font-size: 11px; font-weight: 700; color: white;
+      text-shadow: 0 1px 4px rgba(0,0,0,.8);
+    }
+    .ts svg { width: 11px; height: 11px; fill: white; flex-shrink: 0; }
+
+    /* ── CARD BODY ── */
+    .card-body { padding: 10px 12px 13px; }
+    .desc {
+      font-size: 12px; font-weight: 400; color: rgba(255,255,255,.72);
+      line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 6px;
+    }
+    .meta { font-size: 10.5px; color: var(--muted); font-weight: 300; letter-spacing: .2px; }
+
+    /* ── SKELETON ── */
+    .skel { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .skel-thumb { width: 100%; padding-top: 177.78%; background: var(--bg3); position: relative; overflow: hidden; }
+    .skel-thumb::after, .skel-line::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.035) 50%, transparent 100%);
+      background-size: 200% 100%; animation: shimmer 1.6s ease-in-out infinite;
+    }
+    .skel-body { padding: 10px 12px 13px; }
+    .skel-line { height: 11px; background: var(--bg3); border-radius: 6px; margin-bottom: 7px; position: relative; overflow: hidden; }
+    .skel-line.w70 { width: 70%; } .skel-line.w45 { width: 45%; margin-bottom: 0; }
+    @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+
+    /* ── ERROR ── */
+    .err-box {
+      text-align: center; padding: 4rem 2rem;
+      background: rgba(255,0,0,0.04); border: 1px solid rgba(255,0,0,0.14);
+      border-radius: var(--radius); grid-column: 1/-1;
+    }
+    .err-box .ei { font-size: 34px; margin-bottom: 1rem; display: block; }
+    .err-box h3 { font-size: 15px; font-weight: 600; color: #ff6b6b; margin-bottom: .5rem; }
+    .err-box p { font-size: 12px; color: var(--muted); line-height: 1.8; }
+    .retry-btn {
+      margin-top: 1.25rem; display: inline-flex; align-items: center; gap: 6px;
+      background: transparent; border: 1px solid var(--bh); color: var(--text);
+      font-family: 'Sora', sans-serif; font-size: 12px; font-weight: 600;
+      padding: 8px 18px; border-radius: 999px; cursor: pointer; transition: background .2s;
+    }
+    .retry-btn:hover { background: var(--bg3); }
+
+    /* ── FOOTER ── */
+    footer { text-align: center; padding: 2.5rem 0 3rem; border-top: 1px solid var(--border); margin-top: 2.5rem; }
+    .view-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--red); color: white;
+      font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700;
+      padding: 11px 28px; border-radius: 999px; text-decoration: none; letter-spacing: .2px;
+      transition: opacity .2s, transform .2s;
+    }
+    .view-btn:hover { opacity: .85; transform: scale(1.03); color: white; text-decoration: none; }
+    .view-btn svg { width: 16px; height: 16px; fill: white; }
+    .last-upd { margin-top: .9rem; font-size: 11px; color: var(--muted2); font-weight: 300; }
+
+    /* ── MODAL PLAYER ── */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.88);
+      align-items: center; justify-content: center;
+      animation: fadeIn .2s ease;
+    }
+    .modal-overlay.open { display: flex; }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+    .modal-box {
+      position: relative;
+      width: min(380px, 92vw);
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      animation: popIn .25s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes popIn { from{opacity:0;transform:scale(.88)} to{opacity:1;transform:scale(1)} }
+
+    .modal-header {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 14px 14px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .modal-title {
+      flex: 1; font-size: 12.5px; font-weight: 600;
+      color: var(--text); line-height: 1.5;
+      display: -webkit-box; -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .modal-close {
+      width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+      background: var(--bg3); border: 1px solid var(--border);
+      color: var(--muted); font-size: 16px; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background .15s, color .15s;
+    }
+    .modal-close:hover { background: var(--red); color: white; border-color: var(--red); }
+
+    .modal-player {
+      position: relative; width: 100%; padding-top: 177.78%;
+      background: #000;
+    }
+    .modal-player iframe {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      border: none;
+    }
+
+    .modal-footer {
+      padding: 12px 14px;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    }
+    .modal-meta { font-size: 11px; color: var(--muted); font-weight: 300; }
+    .modal-stats { display: flex; gap: 10px; }
+    .modal-stat { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--muted); }
+    .modal-stat svg { width: 11px; height: 11px; fill: var(--muted); }
+
+    .modal-yt-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--red); color: white;
+      font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 700;
+      padding: 7px 14px; border-radius: 999px; text-decoration: none;
+      white-space: nowrap; transition: opacity .2s;
+    }
+    .modal-yt-btn:hover { opacity: .85; color: white; text-decoration: none; }
+    .modal-yt-btn svg { width: 13px; height: 13px; fill: white; }
+
+    /* prev / next nav */
+    .modal-nav {
+      display: flex; justify-content: center; gap: 8px;
+      padding: 0 14px 14px;
+    }
+    .nav-btn {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px;
+      background: var(--bg3); border: 1px solid var(--border);
+      color: var(--muted); font-family: 'Sora', sans-serif; font-size: 11px; font-weight: 600;
+      padding: 7px 0; border-radius: 999px; cursor: pointer; transition: background .15s, color .15s;
+    }
+    .nav-btn:hover { background: var(--bh); color: var(--text); }
+    .nav-btn:disabled { opacity: .3; cursor: default; }
+    .nav-btn svg { width: 13px; height: 13px; fill: currentColor; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .grid { grid-template-columns: repeat(2,1fr); gap: 10px; }
+      .live-badge { display: none; }
+      header { padding: 1.5rem 0; }
+      .header-text h1 { font-size: 18px; }
+      .modal-box { width: 96vw; border-radius: 16px; }
+    }
+    @media (max-width: 380px) {
+      .grid { gap: 8px; }
+      .wrap { padding: 0 .75rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header>
+    <div class="yt-icon">
+      <svg viewBox="0 0 24 24"><path d="M23.5 6.19a3.02 3.02 0 00-2.12-2.14C19.54 3.5 12 3.5 12 3.5s-7.54 0-9.38.55A3.02 3.02 0 00.5 6.19C0 8.04 0 12 0 12s0 3.96.5 5.81a3.02 3.02 0 002.12 2.14C4.46 20.5 12 20.5 12 20.5s7.54 0 9.38-.55a3.02 3.02 0 002.12-2.14C24 15.96 24 12 24 12s0-3.96-.5-5.81zM9.75 15.52V8.48L15.84 12l-6.09 3.52z"/></svg>
+    </div>
+    <div class="header-text">
+      <h1>@_dkking_</h1>
+      <p>YouTube Shorts · Auto-updating feed</p>
+    </div>
+    <div class="live-badge">
+      <div class="live-dot"></div>
+      Live Feed
+    </div>
+  </header>
+
+  <!-- SETUP NOTICE (shown when API key not set) -->
+  <div class="setup-box" id="setupBox">
+    <h3>⚙️ API Key set කරන්නකො — Steps:</h3>
+    <ol>
+      <li><a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> ගිහිල්ලා Google account-ෙන් login කරන්නකො</li>
+      <li>"New Project" හදන්නකො (eg: <code>youtube-feed</code>)</li>
+      <li>"APIs & Services" → "Enable APIs" → <code>YouTube Data API v3</code> search කරලා Enable</li>
+      <li>"APIs & Services" → "Credentials" → "Create Credentials" → "API Key"</li>
+      <li>ලැබුණු key, HTML file ඇතුළේ <code>API_KEY</code> variable-ට paste කරන්නකො</li>
+    </ol>
+  </div>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-pill">Shorts: <b id="statCount">—</b></div>
+    <div class="stat-pill">Updated: <b id="statTime">—</b></div>
+  </div>
+
+  <!-- FEED GRID -->
+  <div class="grid" id="feedGrid">
+    <div class="skel"><div class="skel-thumb"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line w70"></div><div class="skel-line w45"></div></div></div>
+    <div class="skel"><div class="skel-thumb"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line w70"></div><div class="skel-line w45"></div></div></div>
+    <div class="skel"><div class="skel-thumb"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line w70"></div><div class="skel-line w45"></div></div></div>
+    <div class="skel"><div class="skel-thumb"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line w70"></div><div class="skel-line w45"></div></div></div>
+    <div class="skel"><div class="skel-thumb"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line w70"></div><div class="skel-line w45"></div></div></div>
+    <div class="skel"><div class="skel-thumb"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line w70"></div><div class="skel-line w45"></div></div></div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <a href="https://www.youtube.com/@_dkking_/shorts" target="_blank" rel="noopener" class="view-btn">
+      <svg viewBox="0 0 24 24"><path d="M23.5 6.19a3.02 3.02 0 00-2.12-2.14C19.54 3.5 12 3.5 12 3.5s-7.54 0-9.38.55A3.02 3.02 0 00.5 6.19C0 8.04 0 12 0 12s0 3.96.5 5.81a3.02 3.02 0 002.12 2.14C4.46 20.5 12 20.5 12 20.5s7.54 0 9.38-.55a3.02 3.02 0 002.12-2.14C24 15.96 24 12 24 12s0-3.96-.5-5.81zM9.75 15.52V8.48L15.84 12l-6.09 3.52z"/></svg>
+      YouTube Channel බලන්නකො
+    </a>
+    <div class="last-upd" id="lastUpd"></div>
+  </footer>
+
+
+</div><!-- /wrap -->
+
+<!-- MODAL PLAYER -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal-box" id="modalBox">
+    <div class="modal-header">
+      <p class="modal-title" id="modalTitle"></p>
+      <button class="modal-close" onclick="closeModal()">&#x2715;</button>
+    </div>
+    <div class="modal-player">
+      <iframe id="modalIframe" src="" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen">
+      </iframe>
+    </div>
+    <div class="modal-footer">
+      <div>
+        <div class="modal-stats" id="modalStats"></div>
+        <div class="modal-meta" id="modalMeta"></div>
+      </div>
+      <a class="modal-yt-btn" id="modalYtBtn" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M23.5 6.19a3.02 3.02 0 00-2.12-2.14C19.54 3.5 12 3.5 12 3.5s-7.54 0-9.38.55A3.02 3.02 0 00.5 6.19C0 8.04 0 12 0 12s0 3.96.5 5.81a3.02 3.02 0 002.12 2.14C4.46 20.5 12 20.5 12 20.5s7.54 0 9.38-.55a3.02 3.02 0 002.12-2.14C24 15.96 24 12 24 12s0-3.96-.5-5.81zM9.75 15.52V8.48L15.84 12l-6.09 3.52z"/></svg>
+        YT-ලෙ බලන්නකො
+      </a>
+    </div>
+    <div class="modal-nav">
+      <button class="nav-btn" id="prevBtn" onclick="navigateModal(-1)">
+        <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+        කලින් video
+      </button>
+      <button class="nav-btn" id="nextBtn" onclick="navigateModal(1)">
+        ඊළඟ video
+        <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+//  ⚠️  STEP 1: ඔයාගේ YouTube Data API v3 Key මෙතන PASTE කරන්නකො
+//  Google Cloud Console → APIs & Services → Credentials
+// ════════════════════════════════════════════════════════════
+var API_KEY = 'AIzaSyBTDUosPUGMI6pFHXz_VDLFkv-BPI4_eKI';
+// ════════════════════════════════════════════════════════════
+
+var CHANNEL_HANDLE   = '_dkking_';
+var CHANNEL_DIRECT_ID = '';
+var MAX_RESULTS      = 20;
+var REFRESH_MS       = 30 * 60 * 1000;
+
+var grid      = document.getElementById('feedGrid');
+var statsBar  = document.getElementById('statsBar');
+var statCount = document.getElementById('statCount');
+var statTime  = document.getElementById('statTime');
+var lastUpd   = document.getElementById('lastUpd');
+var setupBox  = document.getElementById('setupBox');
+
+// ── modal refs ──
+var overlay    = document.getElementById('modalOverlay');
+var modalTitle = document.getElementById('modalTitle');
+var modalIframe= document.getElementById('modalIframe');
+var modalStats = document.getElementById('modalStats');
+var modalMeta  = document.getElementById('modalMeta');
+var modalYtBtn = document.getElementById('modalYtBtn');
+var prevBtn    = document.getElementById('prevBtn');
+var nextBtn    = document.getElementById('nextBtn');
+
+var allVideos  = [];   // loaded video list
+var currentIdx = 0;    // current modal index
+
+// ── helpers ──
+function fmtNum(n) {
+  n = parseInt(n) || 0;
+  if (n >= 1e9) return (n/1e9).toFixed(1)+'B';
+  if (n >= 1e6) return (n/1e6).toFixed(1)+'M';
+  if (n >= 1e3) return (n/1e3).toFixed(1)+'K';
+  return n.toLocaleString();
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function fmtDate(iso) {
+  if (!iso) return '';
+  return new Date(iso).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'});
+}
+
+// ── MODAL ──
+function openModal(idx) {
+  currentIdx = idx;
+  var v = allVideos[idx];
+  if (!v) return;
+
+  var videoId = v.id;
+  var title   = v.snippet.title || 'YouTube Short';
+  var views   = (v.statistics && v.statistics.viewCount) ? fmtNum(v.statistics.viewCount) : '';
+  var likes   = (v.statistics && v.statistics.likeCount) ? fmtNum(v.statistics.likeCount) : '';
+  var date    = fmtDate(v.snippet.publishedAt);
+  var ytUrl   = 'https://www.youtube.com/shorts/' + videoId;
+
+  modalTitle.textContent = title;
+  // autoplay=1, mute=0 → sound on, shorts player
+  var embedParams = '?autoplay=1&mute=0&rel=0&playsinline=1&enablejsapi=1&modestbranding=1&fs=1';
+  modalIframe.src = 'https://www.youtube-nocookie.com/embed/' + videoId + embedParams;
+  modalYtBtn.href = ytUrl;
+
+  var statsHtml = '';
+  if (views) statsHtml += '<span class="modal-stat"><svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>'+views+' views</span>';
+  if (likes) statsHtml += '<span class="modal-stat"><svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'+likes+'</span>';
+  modalStats.innerHTML = statsHtml;
+  modalMeta.textContent = date;
+
+  prevBtn.disabled = (idx === 0);
+  nextBtn.disabled = (idx === allVideos.length - 1);
+
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  overlay.classList.remove('open');
+  modalIframe.src = '';   // stop video playback
+  document.body.style.overflow = '';
+}
+
+function handleOverlayClick(e) {
+  if (e.target === overlay) closeModal();
+}
+
+function navigateModal(dir) {
+  var next = currentIdx + dir;
+  if (next >= 0 && next < allVideos.length) openModal(next);
+}
+
+// keyboard: ESC = close, ← = prev, → = next
+document.addEventListener('keydown', function(e) {
+  if (!overlay.classList.contains('open')) return;
+  if (e.key === 'Escape')      closeModal();
+  if (e.key === 'ArrowLeft')   navigateModal(-1);
+  if (e.key === 'ArrowRight')  navigateModal(1);
+});
+
+// ── CARD BUILDER ──
+function buildCard(v, i) {
+  var thumb = v.snippet.thumbnails.high || v.snippet.thumbnails.medium || v.snippet.thumbnails.default || {};
+  var title = v.snippet.title || 'Watch Short';
+  var views = (v.statistics && v.statistics.viewCount) ? fmtNum(v.statistics.viewCount) : '';
+  var likes = (v.statistics && v.statistics.likeCount) ? fmtNum(v.statistics.likeCount) : '';
+  var date  = fmtDate(v.snippet.publishedAt);
+
+  return '<div class="card" style="animation-delay:'+(i*.04)+'s;cursor:pointer;" onclick="openModal('+i+')">'+
+    '<div class="thumb">'+
+      (thumb.url ? '<img src="'+esc(thumb.url)+'" alt="" loading="lazy" />' : '')+
+      '<div class="thumb-grad"></div>'+
+      '<span class="shorts-badge">SHORTS</span>'+
+      '<div class="play-ring"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>'+
+      '<div class="thumb-stats">'+
+        (views ? '<span class="ts"><svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>'+views+'</span>' : '')+
+        (likes ? '<span class="ts"><svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>'+likes+'</span>' : '')+
+      '</div>'+
+    '</div>'+
+    '<div class="card-body">'+
+      '<p class="desc">'+esc(title)+'</p>'+
+      '<p class="meta">'+esc(date)+'</p>'+
+    '</div>'+
+  '</div>';
+}
+
+function showError(msg, detail) {
+  grid.innerHTML = '<div class="err-box">'+
+    '<span class="ei">&#9888;</span>'+
+    '<h3>'+esc(msg)+'</h3>'+
+    '<p>'+esc(detail||'')+'</p>'+
+    '<button class="retry-btn" onclick="init()">&#x21BA; &nbsp;Retry</button>'+
+  '</div>';
+}
+
+function getChannelId() {
+  if (CHANNEL_DIRECT_ID) return Promise.resolve({ id: CHANNEL_DIRECT_ID });
+  var url = 'https://www.googleapis.com/youtube/v3/channels'
+    +'?part=id,contentDetails'
+    +'&forHandle='+encodeURIComponent(CHANNEL_HANDLE)
+    +'&key='+API_KEY;
+  return fetch(url)
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.error) throw new Error(d.error.message);
+      if (!d.items || d.items.length === 0) throw new Error('Channel not found: @'+CHANNEL_HANDLE);
+      CHANNEL_DIRECT_ID = d.items[0].id;
+      return d.items[0];
+    });
+}
+
+function getShortsFromChannel(channel) {
+  var uploadsId;
+  if (channel.contentDetails && channel.contentDetails.relatedPlaylists) {
+    uploadsId = channel.contentDetails.relatedPlaylists.uploads;
+  }
+  if (!uploadsId) uploadsId = 'UU' + CHANNEL_DIRECT_ID.slice(2);
+
+  var playlistUrl = 'https://www.googleapis.com/youtube/v3/playlistItems'
+    +'?part=snippet,contentDetails'
+    +'&playlistId='+encodeURIComponent(uploadsId)
+    +'&maxResults=50'
+    +'&key='+API_KEY;
+
+  return fetch(playlistUrl)
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d.error) throw new Error(d.error.message);
+      var ids = (d.items||[]).map(function(item){
+        return item.contentDetails.videoId || item.snippet.resourceId.videoId;
+      }).filter(Boolean);
+      if (ids.length === 0) throw new Error('No videos found');
+      return ids;
+    })
+    .then(function(ids){
+      var vUrl = 'https://www.googleapis.com/youtube/v3/videos'
+        +'?part=snippet,contentDetails,statistics'
+        +'&id='+ids.join(',')
+        +'&key='+API_KEY;
+      return fetch(vUrl).then(function(r){ return r.json(); });
+    })
+    .then(function(d){
+      if (d.error) throw new Error(d.error.message);
+      var items = d.items || [];
+      var shorts = items.filter(function(v){
+        var dur  = v.contentDetails && v.contentDetails.duration || '';
+        var secs = parseDuration(dur);
+        return secs > 0 && secs <= 180;
+      });
+      if (shorts.length === 0) shorts = items;
+      return shorts.slice(0, MAX_RESULTS);
+    });
+}
+
+function parseDuration(dur) {
+  if (!dur) return 0;
+  var m = dur.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (!m) return 0;
+  return ((parseInt(m[1])||0)*3600) + ((parseInt(m[2])||0)*60) + (parseInt(m[3])||0);
+}
+
+function renderVideos(videos) {
+  if (!videos || videos.length === 0) {
+    showError('Videos load වුනේ නෑ', 'Channel-ලෙ public Shorts නොතිබේ, නැත්නම් API key check කරන්නකො.');
+    return;
+  }
+  allVideos = videos;
+  var html = '';
+  videos.forEach(function(v,i){ html += buildCard(v,i); });
+  grid.innerHTML = html;
+
+  statsBar.style.display = 'flex';
+  statCount.textContent = videos.length;
+  var now = new Date();
+  var t = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  statTime.textContent = t;
+  lastUpd.textContent = 'Last updated: '+now.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' · '+t;
+}
+
+function init() {
+  if (API_KEY === 'YOUR_YOUTUBE_API_KEY') {
+    setupBox.style.display = 'block';
+    showError('API Key set කරලා නෑ', 'HTML file ඇතුළේ API_KEY variable-ට Google Cloud Console-ෙදී ලැබෙන key paste කරන්නකො.');
+    return;
+  }
+  setupBox.style.display = 'none';
+  grid.innerHTML = '<div class="skel"><div class="skel-thumb"></div><div class="skel-body"><div class="skel-line"></div><div class="skel-line w70"></div><div class="skel-line w45"></div></div></div>'.repeat(6);
+
+  getChannelId()
+    .then(function(ch){ return getShortsFromChannel(ch); })
+    .then(renderVideos)
+    .catch(function(err){
+      console.error('YouTube feed error:', err);
+      showError('Feed load කරන්ට බෑ', err.message);
+    });
+}
+
+init();
+setInterval(init, REFRESH_MS);
+</script>
+
+</body>
+</html>
